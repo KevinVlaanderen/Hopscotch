@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="Hopscotch.widgets.HopscotchCallout" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+<widget id="Hopscotch.widgets.HopscotchCallout" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
 	<name>Hopscotch Callout</name>
 	<description>The description of this widget.</description>
 
 	<icon></icon>
 
 	<properties>
+		<property key="toggle" type="attribute" required="true" isPath="optional" pathType="reference">
+			<caption>Toggle</caption>
+			<category>Visibility</category>
+			<description></description>
+
+			<attributeTypes>
+				<attributeType name="Boolean" />
+			</attributeTypes>
+		</property>
+
 		<property key="title" type="string" defaultValue="" required="false">
 			<caption>Title</caption>
 			<category>Content</category>

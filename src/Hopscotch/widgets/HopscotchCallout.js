@@ -4,45 +4,76 @@
 
     require([
 
-        'dojo/_base/declare', 'Hopscotch/widgets/HopscotchBase', 'dijit/_TemplatedMixin',
-        'mxui/dom', 'dojo/dom', 'dojo/query', 'dojo/dom-prop', 'dojo/dom-geometry', 'dojo/dom-class', 'dojo/dom-style', 'dojo/dom-construct', 'dojo/_base/array', 'dojo/_base/lang', 'dojo/text',
-        'Hopscotch/widgets/lib/hopscotchsrc'
+        'dojo/_base/declare', 'Hopscotch/widgets/HopscotchBase',
+        'mxui/dom', 'dojo/dom', 'dojo/query', 'dojo/dom-prop', 'dojo/dom-geometry', 'dojo/dom-class', 'dojo/dom-style', 'dojo/dom-construct', 'dojo/_base/array', 'dojo/_base/lang', 'dojo/text'
 
-    ], function (declare, _HopscotchBase, _Templated, dom, DojoDom, domQuery, domProp, domGeom, domClass, domStyle, domConstruct, dojoArray, lang, text, _hopscotch) {
+    ], function (declare, _HopscotchBase, dom, DojoDom, domQuery, domProp, domGeom, domClass, domStyle, domConstruct, dojoArray, lang, text) {
 
-        return declare('Hopscotch.widgets.HopscotchCallout', [ _HopscotchBase, _Templated, _hopscotch ], {
+        return declare('Hopscotch.widgets._hopscotchCallout', [ _HopscotchBase ], {
 
-            templatePath: require.toUrl('Hopscotch/widgets/templates/HopscotchCallout.html'),
-
-            calloutMgr: null,
-            callout: null,
+            _calloutMgr: null,
+            _callout: null,
 
             constructor: function () {
     		},
 
             postCreate: function () {
-                this.calloutMgr = this.hop.getCalloutManager();
+                this._calloutMgr = this._hop.getCalloutManager();
 
-                this.callout = this.params;
+                this._callout = this.params;
 
-                this.callout.id = this.id;
+                this._callout.id = this.id;
 
-                this.callout.onCTA = lang.hitch(this, this.execmf, this.callout.onCtaMF);
-                this.callout.onShow = lang.hitch(this, this.execmf, this.callout.onShowMF);
-                this.callout.onClose = lang.hitch(this, this.execmf, this.callout.onCloseMF);
-                this.callout.onError = lang.hitch(this, this.execmf, this.callout.onErrorMF);
+                this._callout.onCTA = lang.hitch(this, this._execmf, this._callout.onCtaMF);
+                this._callout.onShow = lang.hitch(this, this._execmf, this._callout.onShowMF);
+                this._callout.onClose = lang.hitch(this, this._execmf, this._callout.onCloseMF);
+                this._callout.onError = lang.hitch(this, this._execmf, this._callout.onErrorMF);
+
+                // To be able to use this widget with multiple instances of itself we need to add a data variable.
+                this._data[this.id] = {
+                    contextGuid: null,
+                    contextObj: null,
+                    handleObj: null,
+                    handleAttr: null
+                };
+                
+                var path = this.toggle.split("/");
+                this._attribute = path[path.length - 1];
             },
 
             startup: function () {
                 setTimeout(lang.hitch(this, "showCallout"), 1000);
             },
 
-            uninitialize: function () {
-                this.calloutMgr.removeAllCallouts();
+            _loadData: function () {
+                //console.log(this.id + '._loadData');
+                var visible = this._data[this.id]._contextObj.get(this._attribute);
+
+                if (visible) {
+                    var callout = this._calloutMgr.getCallout(this._callout.id);
+                    if (!callout) {
+                        this._showCallout();
+                    }
+                } else {
+                    var callout = this._calloutMgr.getCallout(this._callout.id);
+                    if (callout) {
+                        this._hideCallout();
+                    }
+                }
+
             },
 
-            showCallout: function () {
-                this.calloutMgr.createCallout(this.callout);
+            uninitialize: function () {
+                this._cleanupSubscriptions();
+                this._calloutMgr.removeAllCallouts();
+            },
+
+            _showCallout: function () {
+                this._calloutMgr.createCallout(this._callout);
+            },
+
+            _hideCallout: function () {
+                this._calloutMgr.removeCallout(this._callout.id);
             }
         });
     });
