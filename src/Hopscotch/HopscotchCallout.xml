@@ -6,7 +6,7 @@
 	<icon></icon>
 
 	<properties>
-		<property key="toggle" type="attribute" required="true" isPath="optional" pathType="reference">
+		<property key="toggle" type="attribute" required="true">
 			<caption>Toggle</caption>
 			<category>Visibility</category>
 			<description></description>

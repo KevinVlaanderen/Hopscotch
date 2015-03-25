@@ -9,24 +9,21 @@ define([
 	'use strict';
 
     return declare([ _WidgetBase, _hopscotch ], {
-
-        toggle: "",
-
+        
         _data: {},
         _attribute: null,
 
         _hop: null,
 
         constructor: function () {
+            console.log('HopsotchBase.constructor');
             this._hop = _hopscotch().hopscotchsrc();
-
-            
 		},
 
         update: function (obj, callback) {
-            //console.log(this.id + '.update');
+            console.log(this.id + '.update');
             if (obj === null) {
-                //console.log(this.id + '.update - We did not get any context object!');
+                console.log(this.id + '.update - We did not get any context object!');
                 if (!domClass.contains(this.domNode, 'hidden')) {
                     domClass.add(this.domNode, 'hidden');
                 }
@@ -78,7 +75,7 @@ define([
         },
 
         _resetSubscriptions: function () {
-            //console.log(this.id + '._resetSubscriptions');
+            console.log(this.id + '._resetSubscriptions');
             // Release handle on previous object, if any.
             this._cleanupSubscriptions();
             // Subscribe to object updates.

@@ -15,6 +15,7 @@
             _callout: null,
 
             constructor: function () {
+                console.log('HopsotchBase.constructor');
     		},
 
             postCreate: function () {
