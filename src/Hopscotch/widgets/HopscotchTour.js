@@ -14,9 +14,11 @@
     		_tour: null,
 
             constructor: function () {
+                //console.log(this.id + '.constructor');
     		},
 
             postCreate: function () {
+                //console.log(this.id + '.postCreate');
                 this._setupContext();
 
     			this._tour = this.params;
@@ -34,10 +36,13 @@
             },
 
             uninitialize: function () {
+                //console.log(this.id + '.uninitialize');
+                this._cleanupSubscriptions();
                 this._stopTour(false);
             },
 
             _buildSteps: function() {
+                //console.log(this.id + '._buildSteps');
             	this.steps.forEach(function(step) {
                     if (step.onNextMF) {
                         step.onNext = lang.hitch(this, this._execmf, step.onNextMF);
@@ -63,6 +68,7 @@
             },
 
             _show: function () {
+                //console.log(this.id + '._show');
                 var tour = this._hop.getCurrTour();
                 if (tour != this._tour) {
                     if (tour) {
@@ -74,6 +80,7 @@
             },
 
             _hide: function () {
+                //console.log(this.id + '._hide');
                 var tour = this._hop.getCurrTour();
                 if (tour) {
                     this._hop.endTour(false);

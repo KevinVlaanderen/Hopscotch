@@ -18,12 +18,12 @@ define([
         _visible: false,
 
         constructor: function () {
-            console.log(this.id + '.constructor');
+            //console.log(this.id + '.constructor');
             this._hop = _hopscotch().hopscotchsrc();
 		},
 
         update: function (obj, callback) {
-            console.log(this.id + '.update');
+            //console.log(this.id + '.update');
             if (obj === null) {
                 console.log(this.id + '.update - We did not get any context object!');
             } else {
@@ -38,7 +38,7 @@ define([
         },
 
         startup: function () {
-            console.log(this.id + '.startup');
+            //console.log(this.id + '.startup');
             var self = this;
             setTimeout(function() {
                 self._started = true;
@@ -46,11 +46,13 @@ define([
             }, 1000);
         },
 
-        refreshPositions: function () {
+        _refreshPositions: function () {
+            //console.log(this.id + '._refreshPositions');
             this._hop.refreshBubblePosition();
         },
 
         _execmf: function (MF) {
+            //console.log(this.id + '._execmf');
         	if (MF) {
         		mx.ui.action(MF, {
 			        context: new mendix.lib.MxContext(),
@@ -65,7 +67,7 @@ define([
         },
 
         _loadDataCallback: function (objs) {
-            console.log(this.id + '._loadDataCallback');
+            //console.log(this.id + '._loadDataCallback');
             // Set the object as background.
             this._data[this.id]._contextObj = objs[0];
             // Load data again.
@@ -73,7 +75,6 @@ define([
         },
 
         _loadData: function () {
-            console.log(this.id + '._loadData');
             //console.log(this.id + '._loadData');
             this._visible = this._data[this.id]._contextObj.get(this._attribute);
 
@@ -91,7 +92,7 @@ define([
         },
 
         _setupContext: function() {
-            console.log(this.id + '.setupContext');
+            //console.log(this.id + '.setupContext');
             // To be able to use this widget with multiple instances of itself we need to add a data variable.
             this._data[this.id] = {
                 contextGuid: null,
@@ -105,7 +106,7 @@ define([
         },
 
         _resetSubscriptions: function () {
-            console.log(this.id + '._resetSubscriptions');
+            //console.log(this.id + '._resetSubscriptions');
             // Release handle on previous object, if any.
             this._cleanupSubscriptions();
             // Subscribe to object updates.
@@ -133,7 +134,7 @@ define([
         },
 
         _cleanupSubscriptions: function () {
-            console.log(this.id + '._cleanupSubscriptions');
+            //console.log(this.id + '._cleanupSubscriptions');
             if (this._data[this.id]._handleObj) {
                 mx.data.unsubscribe(this._data[this.id]._handleObj);
                 this._data[this.id]._handleObj = null;

@@ -15,12 +15,12 @@
             _callout: null,
 
             constructor: function () {
-                console.log(this.id + '.constructor');
+                //console.log(this.id + '.constructor');
                 this._calloutMgr = this._hop.getCalloutManager();
     		},
 
             postCreate: function () {
-                console.log(this.id + '.postCreate');
+                //console.log(this.id + '.postCreate');
                 this._setupContext();
 
                 this._callout = this.params;
@@ -34,12 +34,13 @@
             },
 
             uninitialize: function () {
+                //console.log(this.id + '.uninitialize');
                 this._cleanupSubscriptions();
                 this._calloutMgr.removeAllCallouts();
             },
 
             _show: function () {
-                console.log(this.id + '._show');
+                //console.log(this.id + '._show');
                 var callout = this._calloutMgr.getCallout(this._callout.id);
                 if (!callout) {
                     this._calloutMgr.createCallout(this._callout);
@@ -48,7 +49,7 @@
             },
 
             _hide: function () {
-                console.log(this.id + '._hide');
+                //console.log(this.id + '._hide');
                 var callout = this._calloutMgr.getCallout(this._callout.id);
                 if (callout) {
                     this._calloutMgr.removeCallout(this._callout.id);
