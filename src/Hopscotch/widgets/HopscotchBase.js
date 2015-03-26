@@ -14,8 +14,11 @@ define([
         _attribute: null,
 
         _hop: null,
+        _started: false,
+        _visible: false,
 
         constructor: function () {
+            console.log(this.id + '.constructor');
             this._hop = _hopscotch().hopscotchsrc();
 		},
 
@@ -32,6 +35,15 @@ define([
             if (typeof callback !== 'undefined') {
                 callback();
             }
+        },
+
+        startup: function () {
+            console.log(this.id + '.startup');
+            var self = this;
+            setTimeout(function() {
+                self._started = true;
+                self._show();
+            }, 1000);
         },
 
         refreshPositions: function () {
@@ -53,13 +65,33 @@ define([
         },
 
         _loadDataCallback: function (objs) {
+            console.log(this.id + '._loadDataCallback');
             // Set the object as background.
             this._data[this.id]._contextObj = objs[0];
             // Load data again.
             this._loadData();
         },
 
+        _loadData: function () {
+            console.log(this.id + '._loadData');
+            //console.log(this.id + '._loadData');
+            this._visible = this._data[this.id]._contextObj.get(this._attribute);
+
+            if (this._started && !this._visible) {
+                //var callout = this._calloutMgr.getCallout(this._callout.id);
+                //if (this._started && !callout) {
+                    this._show();
+                //}
+            } else if (this._started && this._visible) {
+                //var callout = this._calloutMgr.getCallout(this._callout.id);
+                //if (callout) {
+                    this._hide();
+                //}
+            }
+        },
+
         _setupContext: function() {
+            console.log(this.id + '.setupContext');
             // To be able to use this widget with multiple instances of itself we need to add a data variable.
             this._data[this.id] = {
                 contextGuid: null,
@@ -70,14 +102,6 @@ define([
             
             var path = this.toggle.split("/");
             this._attribute = path[path.length - 1];
-        },
-
-        _setupEvents: function () {
-            this.connect(this.domNode, 'click', function () {
-                this._saveData();
-                this._execMF(this._data[this.id]._contextObj, this.onChangeMF);
-                //this._resetSubscriptions();
-            });
         },
 
         _resetSubscriptions: function () {
@@ -109,6 +133,7 @@ define([
         },
 
         _cleanupSubscriptions: function () {
+            console.log(this.id + '._cleanupSubscriptions');
             if (this._data[this.id]._handleObj) {
                 mx.data.unsubscribe(this._data[this.id]._handleObj);
                 this._data[this.id]._handleObj = null;

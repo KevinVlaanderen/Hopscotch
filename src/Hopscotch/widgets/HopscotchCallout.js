@@ -14,13 +14,13 @@
             _calloutMgr: null,
             _callout: null,
 
-            _started: false,
-
             constructor: function () {
+                console.log(this.id + '.constructor');
                 this._calloutMgr = this._hop.getCalloutManager();
     		},
 
             postCreate: function () {
+                console.log(this.id + '.postCreate');
                 this._setupContext();
 
                 this._callout = this.params;
@@ -33,42 +33,27 @@
                 this._callout.onError = lang.hitch(this, this._execmf, this._callout.onErrorMF);
             },
 
-            startup: function () {
-                var self = this;
-                setTimeout(function() {
-                    self.started = true;
-                    lang.hitch(self, self._showCallout);
-                }, 1000);
-            },
-
             uninitialize: function () {
                 this._cleanupSubscriptions();
                 this._calloutMgr.removeAllCallouts();
             },
 
-            _loadData: function () {
-                //console.log(this.id + '._loadData');
-                var visible = this._data[this.id]._contextObj.get(this._attribute);
-
-                if (visible) {
-                    var callout = this._calloutMgr.getCallout(this._callout.id);
-                    if (this.started && !callout) {
-                        this._showCallout();
-                    }
-                } else {
-                    var callout = this._calloutMgr.getCallout(this._callout.id);
-                    if (callout) {
-                        this._hideCallout();
-                    }
+            _show: function () {
+                console.log(this.id + '._show');
+                var callout = this._calloutMgr.getCallout(this._callout.id);
+                if (!callout) {
+                    this._calloutMgr.createCallout(this._callout);
                 }
+                this._visible = true;
             },
 
-            _showCallout: function () {
-                this._calloutMgr.createCallout(this._callout);
-            },
-
-            _hideCallout: function () {
-                this._calloutMgr.removeCallout(this._callout.id);
+            _hide: function () {
+                console.log(this.id + '._hide');
+                var callout = this._calloutMgr.getCallout(this._callout.id);
+                if (callout) {
+                    this._calloutMgr.removeCallout(this._callout.id);
+                }
+                this._visible = false;
             }
         });
     });

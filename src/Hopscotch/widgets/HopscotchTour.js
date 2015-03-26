@@ -13,8 +13,6 @@
 
     		_tour: null,
 
-            _started: false,
-
             constructor: function () {
     		},
 
@@ -35,33 +33,8 @@
     			this._tour.onError = lang.hitch(this, this._execmf, this._tour.onErrorMF);
             },
 
-            startup: function () {
-                var self = this;
-                setTimeout(function() {
-                    self.started = true;
-                    lang.hitch(self, self._startTour);
-                }, 1000);
-            },
-
             uninitialize: function () {
                 this._stopTour(false);
-            },
-
-            _loadData: function () {
-                //console.log(this.id + '._loadData');
-                var visible = this._data[this.id]._contextObj.get(this._attribute);
-
-                if (visible) {
-                    var tour = this._hop.getCurrTour();
-                    if (this.started && !tour) {
-                        this._startTour();
-                    }
-                } else {
-                    var tour = this._hop.getCurrTour();
-                    if (tour) {
-                        this._stopTour();
-                    }
-                }
             },
 
             _buildSteps: function() {
@@ -89,12 +62,23 @@
                 return this.steps;
             },
 
-            _startTour: function () {
-                this._hop.startTour(this._tour);
+            _show: function () {
+                var tour = this._hop.getCurrTour();
+                if (tour != this._tour) {
+                    if (tour) {
+                        this._hop.endTour(tour);
+                    }
+                    this._hop.startTour(this._tour);
+                }    
+                this._visible = true;            
             },
 
-            _stopTour: function () {
-                this._hop.endTour(this._tour, false);
+            _hide: function () {
+                var tour = this._hop.getCurrTour();
+                if (tour) {
+                    this._hop.endTour(false);
+                }
+                this._visible = false;
             }
         });
     });
