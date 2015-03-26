@@ -29,7 +29,7 @@ define([
             } else {
                 this._data[this.id]._contextObj = obj;
                 this._resetSubscriptions();
-                this._loadData();
+                this._processData();
             }
             // Execute callback.
             if (typeof callback !== 'undefined') {
@@ -42,7 +42,7 @@ define([
             var self = this;
             setTimeout(function() {
                 self._started = true;
-                self._show();
+                //self._show();
             }, 1000);
         },
 
@@ -71,23 +71,17 @@ define([
             // Set the object as background.
             this._data[this.id]._contextObj = objs[0];
             // Load data again.
-            this._loadData();
+            this._processData();
         },
 
-        _loadData: function () {
+        _processData: function () {
             //console.log(this.id + '._loadData');
             this._visible = this._data[this.id]._contextObj.get(this._attribute);
 
-            if (this._started && !this._visible) {
-                //var callout = this._calloutMgr.getCallout(this._callout.id);
-                //if (this._started && !callout) {
-                    this._show();
-                //}
-            } else if (this._started && this._visible) {
-                //var callout = this._calloutMgr.getCallout(this._callout.id);
-                //if (callout) {
-                    this._hide();
-                //}
+            if (this._visible) {
+                this._show();
+            } else {
+                this._hide();
             }
         },
 
