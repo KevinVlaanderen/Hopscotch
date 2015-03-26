@@ -9,17 +9,19 @@
 
     ], function (declare, _HopscotchBase, dom, DojoDom, domQuery, domProp, domGeom, domClass, domStyle, domConstruct, dojoArray, lang, text) {
 
-        return declare('Hopscotch.widgets._hopscotchCallout', [ _HopscotchBase ], {
+        return declare('Hopscotch.widgets.HopscotchCallout', [ _HopscotchBase ], {
 
             _calloutMgr: null,
             _callout: null,
 
+            _started: false,
+
             constructor: function () {
-                console.log('HopsotchBase.constructor');
+                this._calloutMgr = this._hop.getCalloutManager();
     		},
 
             postCreate: function () {
-                this._calloutMgr = this._hop.getCalloutManager();
+                this._setupContext();
 
                 this._callout = this.params;
 
@@ -29,21 +31,19 @@
                 this._callout.onShow = lang.hitch(this, this._execmf, this._callout.onShowMF);
                 this._callout.onClose = lang.hitch(this, this._execmf, this._callout.onCloseMF);
                 this._callout.onError = lang.hitch(this, this._execmf, this._callout.onErrorMF);
-
-                // To be able to use this widget with multiple instances of itself we need to add a data variable.
-                this._data[this.id] = {
-                    contextGuid: null,
-                    contextObj: null,
-                    handleObj: null,
-                    handleAttr: null
-                };
-                
-                var path = this.toggle.split("/");
-                this._attribute = path[path.length - 1];
             },
 
             startup: function () {
-                setTimeout(lang.hitch(this, "showCallout"), 1000);
+                var self = this;
+                setTimeout(function() {
+                    self.started = true;
+                    lang.hitch(self, self._showCallout);
+                }, 1000);
+            },
+
+            uninitialize: function () {
+                this._cleanupSubscriptions();
+                this._calloutMgr.removeAllCallouts();
             },
 
             _loadData: function () {
@@ -52,7 +52,7 @@
 
                 if (visible) {
                     var callout = this._calloutMgr.getCallout(this._callout.id);
-                    if (!callout) {
+                    if (this.started && !callout) {
                         this._showCallout();
                     }
                 } else {
@@ -61,12 +61,6 @@
                         this._hideCallout();
                     }
                 }
-
-            },
-
-            uninitialize: function () {
-                this._cleanupSubscriptions();
-                this._calloutMgr.removeAllCallouts();
             },
 
             _showCallout: function () {

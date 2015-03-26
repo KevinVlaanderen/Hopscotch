@@ -2,13 +2,13 @@
     
 define([
 
-    'dojo/_base/declare', 'dojo/_base/lang', 'mxui/widget/_WidgetBase',
+    'dojo/_base/declare', 'dojo/_base/lang', 'mxui/widget/_WidgetBase', 'dijit/_Widget',
     'Hopscotch/widgets/lib/hopscotchsrc'
 
-], function (declare, lang, _WidgetBase, _hopscotch) {
+], function (declare, lang, _WidgetBase, _Widget, _hopscotch) {
 	'use strict';
 
-    return declare([ _WidgetBase, _hopscotch ], {
+    return declare([ _WidgetBase, _hopscotch, _Widget ], {
         
         _data: {},
         _attribute: null,
@@ -16,7 +16,6 @@ define([
         _hop: null,
 
         constructor: function () {
-            console.log('HopsotchBase.constructor');
             this._hop = _hopscotch().hopscotchsrc();
 		},
 
@@ -24,13 +23,7 @@ define([
             console.log(this.id + '.update');
             if (obj === null) {
                 console.log(this.id + '.update - We did not get any context object!');
-                if (!domClass.contains(this.domNode, 'hidden')) {
-                    domClass.add(this.domNode, 'hidden');
-                }
             } else {
-                if (domClass.contains(this.domNode, 'hidden')) {
-                    domClass.remove(this.domNode, 'hidden');
-                }
                 this._data[this.id]._contextObj = obj;
                 this._resetSubscriptions();
                 this._loadData();
@@ -64,6 +57,19 @@ define([
             this._data[this.id]._contextObj = objs[0];
             // Load data again.
             this._loadData();
+        },
+
+        _setupContext: function() {
+            // To be able to use this widget with multiple instances of itself we need to add a data variable.
+            this._data[this.id] = {
+                contextGuid: null,
+                contextObj: null,
+                handleObj: null,
+                handleAttr: null
+            };
+            
+            var path = this.toggle.split("/");
+            this._attribute = path[path.length - 1];
         },
 
         _setupEvents: function () {

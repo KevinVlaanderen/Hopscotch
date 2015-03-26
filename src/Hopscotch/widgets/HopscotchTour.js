@@ -9,15 +9,17 @@
 
     ], function (declare, _HopscotchBase, dom, DojoDom, domQuery, domProp, domGeom, domClass, domStyle, domConstruct, dojoArray, lang, text) {
 
-        return declare('Hopscotch.widgets._hopscotchTour', [ _HopscotchBase ], {
+        return declare('Hopscotch.widgets.HopscotchTour', [ _HopscotchBase ], {
 
     		_tour: null,
-    		_steps: null,
+
+            _started: false,
 
             constructor: function () {
     		},
 
             postCreate: function () {
+                this._setupContext();
 
     			this._tour = this.params;
 
@@ -34,23 +36,36 @@
             },
 
             startup: function () {
-                setTimeout(lang.hitch(this, "_startTour"), 1000);
+                var self = this;
+                setTimeout(function() {
+                    self.started = true;
+                    lang.hitch(self, self._startTour);
+                }, 1000);
             },
 
             uninitialize: function () {
-                this._hop.endTour(false);
-            },
-
-            _startTour: function () {
-                this._hop.startTour(this._tour);
+                this._stopTour(false);
             },
 
             _loadData: function () {
+                //console.log(this.id + '._loadData');
+                var visible = this._data[this.id]._contextObj.get(this._attribute);
 
+                if (visible) {
+                    var tour = this._hop.getCurrTour();
+                    if (this.started && !tour) {
+                        this._startTour();
+                    }
+                } else {
+                    var tour = this._hop.getCurrTour();
+                    if (tour) {
+                        this._stopTour();
+                    }
+                }
             },
 
             _buildSteps: function() {
-            	this._steps.forEach(function(step) {
+            	this.steps.forEach(function(step) {
                     if (step.onNextMF) {
                         step.onNext = lang.hitch(this, this._execmf, step.onNextMF);
                     }
@@ -71,7 +86,15 @@
                     }
             	}, this);
 
-                return this._steps;
+                return this.steps;
+            },
+
+            _startTour: function () {
+                this._hop.startTour(this._tour);
+            },
+
+            _stopTour: function () {
+                this._hop.endTour(this._tour, false);
             }
         });
     });
